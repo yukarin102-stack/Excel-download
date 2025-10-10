@@ -1264,22 +1264,20 @@
             }, 2000);
         }
 
-        // ファイルダウンロード処理
+        // ファイルダウンロード処理（PDFのみ）
         function downloadFiles(selectedMaterials) {
             selectedMaterials.forEach(material => {
                 if (material.files && material.files.length > 0) {
-                    material.files.forEach((file, index) => {
-                        const fileName = material.files.length > 1 ? 
+                    // PDFファイルのみをフィルタリング
+                    const pdfFiles = material.files.filter(file => file.fileType === 'pdf' && file.pdfData);
+                    
+                    pdfFiles.forEach((file, index) => {
+                        const fileName = pdfFiles.length > 1 ? 
                             `${material.name}_${index + 1}_${file.fileName}` : 
-                            file.fileName || `${material.name}.${file.fileType === 'pdf' ? 'pdf' : 'jpg'}`;
+                            file.fileName || `${material.name}.pdf`;
                         
-                        if (file.pdfData && file.fileType === 'pdf') {
-                            // PDFファイルのダウンロード
-                            setTimeout(() => downloadPDFFile(file.pdfData, fileName), index * 500);
-                        } else if (file.image) {
-                            // 画像ファイルのダウンロード
-                            setTimeout(() => downloadImageFile(file.image, fileName), index * 500);
-                        }
+                        // PDFファイルのダウンロード（500ms間隔で順次実行）
+                        setTimeout(() => downloadPDFFile(file.pdfData, fileName), index * 500);
                     });
                 }
             });
@@ -1295,14 +1293,10 @@
             document.body.removeChild(link);
         }
 
-        // 画像ファイルのダウンロード
+        // 画像ファイルのダウンロード（使用されません - PDFのみダウンロード）
         function downloadImageFile(imageData, fileName) {
-            const link = document.createElement('a');
-            link.href = imageData;
-            link.download = fileName;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
+            // この関数は使用されません（PDFのみダウンロード）
+            console.log('画像ファイルはダウンロード対象外です（アイキャッチ表示のみ）:', fileName);
         }
 
         // 単一ファイルのダウンロード（レガシー）
@@ -1548,7 +1542,7 @@
                     }, 100);
                     
                     const fileCount = materialsData[materialId].files.length;
-                    showMessage(`${materialsData[materialId].name}に画像が追加されました。（総計${fileCount}件）Thank Youページにも反映されました。`, 'success', 'adminMessage');
+                    showMessage(`${materialsData[materialId].name}に画像が追加されました。（総計${fileCount}件）アイキャッチ表示のみでダウンロード対象外です。`, 'success', 'adminMessage');
                 });
             };
             reader.readAsDataURL(file);
@@ -1591,7 +1585,7 @@
                 }, 100);
                 
                 const fileCount = materialsData[materialId].files.length;
-                showMessage(`${materialsData[materialId].name}にPDFが追加されました。（総計${fileCount}件）Thank Youページにも反映されました。`, 'success', 'adminMessage');
+                showMessage(`${materialsData[materialId].name}にPDFが追加されました。（総計${fileCount}件）ダウンロード可能です。`, 'success', 'adminMessage');
             };
             reader.readAsDataURL(file);
         }
