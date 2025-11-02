@@ -24,7 +24,6 @@
             padding: 20px;
         }
 
-        /* Header */
         header {
             background: white;
             border-bottom: 1px solid #e5e7eb;
@@ -45,7 +44,6 @@
             font-size: 16px;
         }
 
-        /* Navigation */
         .nav-buttons {
             display: flex;
             justify-content: center;
@@ -111,7 +109,6 @@
             font-size: 12px;
         }
 
-        /* Login Modal */
         .modal {
             display: none;
             position: fixed;
@@ -175,7 +172,6 @@
             display: none;
         }
 
-        /* Pages */
         .page {
             display: none;
         }
@@ -184,7 +180,6 @@
             display: block;
         }
 
-        /* Download Page */
         .select-all {
             text-align: center;
             margin-bottom: 30px;
@@ -276,10 +271,6 @@
             margin-bottom: 20px;
         }
 
-        .individual-download {
-            text-align: center;
-        }
-
         .loading {
             text-align: center;
             margin: 40px 0;
@@ -300,7 +291,6 @@
             100% { transform: rotate(360deg); }
         }
 
-        /* Admin Page */
         .admin-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -340,6 +330,25 @@
             cursor: pointer;
             margin-bottom: 10px;
             font-size: 14px;
+        }
+
+        .file-preview {
+            margin-top: 10px;
+            padding: 10px;
+            background: #f3f4f6;
+            border-radius: 6px;
+            font-size: 13px;
+            color: #374151;
+            display: none;
+        }
+
+        .file-preview.active {
+            display: block;
+        }
+
+        .save-button-container {
+            margin-top: 15px;
+            text-align: center;
         }
 
         .file-list {
@@ -425,11 +434,11 @@
         </div>
     </div>
 
-    <!-- Download Page -->
+    <!-- Download Page (デフォルト表示) -->
     <div id="downloadPage" class="page active">
         <header>
             <div class="container">
-                <h1>Firebase資料ダウンロードサイト</h1>
+                <h1>資料ダウンロードサイト</h1>
                 <p class="description">
                     詳細なPDF資料をダウンロードしてご確認いただけます。<br>
                     <small style="color: #9ca3af;">＊PDF資料のみがダウンロードされます。画像はプレビュー用です。</small>
@@ -499,7 +508,6 @@
         import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js';
         import { getFirestore, collection, doc, setDoc, getDocs, deleteDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
-        // Firebase設定
         const firebaseConfig = {
             apiKey: "AIzaSyAQPFQXjxXc_KG0GQh_5DvuRtT2Dm-_kow",
             authDomain: "excelfile1.firebaseapp.com",
@@ -513,7 +521,6 @@
         const storage = getStorage(app);
         const db = getFirestore(app);
 
-        // グローバル変数
         const ADMIN_PASSWORD = 'admin123';
         const MATERIAL_CATEGORIES = [
             { id: '1', name: '新入社員研修' },
@@ -524,8 +531,8 @@
 
         let materials = [];
         let selectedFiles = new Set();
+        let pendingUploads = {}; // 保存待ちのファイル
 
-        // ページ切り替え
         window.showDownloadPage = function() {
             document.getElementById('downloadPage').classList.add('active');
             document.getElementById('adminPage').classList.remove('active');
@@ -547,7 +554,6 @@
             showDownloadPage();
         };
 
-        // ログイン処理
         document.getElementById('loginForm').addEventListener('submit', function(e) {
             e.preventDefault();
             const password = document.getElementById('password').value;
@@ -569,7 +575,6 @@
             loadMaterialsForAdmin();
         }
 
-        // 資料読み込み（ダウンロードページ用）
         async function loadMaterialsForDownload() {
             document.getElementById('downloadLoading').style.display = 'block';
             document.getElementById('downloadContent').style.display = 'none';
@@ -595,12 +600,11 @@
                 document.getElementById('downloadContent').style.display = 'block';
             } catch (error) {
                 console.error('資料の読み込みエラー:', error);
-                alert('資料の読み込みに失敗しました');
+                alert('資料の読み込みに失敗しました: ' + error.message);
                 document.getElementById('downloadLoading').style.display = 'none';
             }
         }
 
-        // 資料グリッド表示
         function renderMaterialsGrid() {
             const grid = document.getElementById('materialsGrid');
             grid.innerHTML = '';
@@ -656,7 +660,6 @@
             });
         }
 
-        // ファイル選択
         window.toggleFileSelection = function(fileId) {
             const checkbox = document.getElementById(`file-${fileId}`);
             const preview = document.getElementById(`preview-${fileId}`);
@@ -674,7 +677,6 @@
             updateDownloadButton();
         };
 
-        // 全選択
         window.toggleSelectAll = function() {
             const selectAll = document.getElementById('selectAll');
             
@@ -704,7 +706,6 @@
             btn.disabled = selectedFiles.size === 0;
         }
 
-        // 個別ダウンロード
         window.downloadIndividual = async function(materialId) {
             const material = materials.find(m => m.id === materialId);
             if (!material) return;
@@ -717,7 +718,6 @@
 
             try {
                 if (pdfFiles.length === 1) {
-                    // 単一ファイルの場合は直接ダウンロード
                     const link = document.createElement('a');
                     link.href = pdfFiles[0].downloadUrl;
                     link.download = pdfFiles[0].fileName;
@@ -725,7 +725,6 @@
                     link.click();
                     document.body.removeChild(link);
                 } else {
-                    // 複数ファイルの場合はZIPでダウンロード
                     const JSZip = (await import('https://cdn.jsdelivr.net/npm/jszip@3.10.1/+esm')).default;
                     const zip = new JSZip();
 
@@ -747,11 +746,10 @@
                 }
             } catch (error) {
                 console.error('ダウンロードエラー:', error);
-                alert('ダウンロードに失敗しました');
+                alert('ダウンロードに失敗しました: ' + error.message);
             }
         };
 
-        // 一括ダウンロード
         window.downloadSelected = async function() {
             if (selectedFiles.size === 0) {
                 alert('ダウンロードするファイルを選択してください');
@@ -798,14 +796,13 @@
                 alert('ダウンロードを開始しました');
             } catch (error) {
                 console.error('ダウンロードエラー:', error);
-                alert('ダウンロードに失敗しました');
+                alert('ダウンロードに失敗しました: ' + error.message);
             } finally {
                 btn.disabled = false;
                 btn.textContent = '選択した資料を一括ダウンロード';
             }
         };
 
-        // 資料読み込み（管理画面用）
         async function loadMaterialsForAdmin() {
             document.getElementById('adminLoading').style.display = 'block';
             document.getElementById('adminContent').style.display = 'none';
@@ -831,12 +828,11 @@
                 document.getElementById('adminContent').style.display = 'block';
             } catch (error) {
                 console.error('資料の読み込みエラー:', error);
-                alert('資料の読み込みに失敗しました');
+                alert('資料の読み込みに失敗しました: ' + error.message);
                 document.getElementById('adminLoading').style.display = 'none';
             }
         }
 
-        // 管理画面グリッド表示
         function renderAdminGrid() {
             const grid = document.getElementById('adminGrid');
             grid.innerHTML = '';
@@ -884,12 +880,20 @@
                     
                     <div class="upload-section">
                         <h4>🖼️ プレビュー画像（PNG/JPG）</h4>
-                        <input type="file" class="file-input" accept="image/*" onchange="handleFileUpload(event, '${material.id}', 'image')">
+                        <input type="file" id="imageInput-${material.id}" class="file-input" accept="image/*" onchange="handleFileSelect(event, '${material.id}', 'image')">
+                        <div id="imagePreview-${material.id}" class="file-preview"></div>
+                        <div class="save-button-container">
+                            <button id="imageSaveBtn-${material.id}" class="btn btn-primary" onclick="saveFile('${material.id}', 'image')" style="display: none;">画像を保存</button>
+                        </div>
                     </div>
                     
                     <div class="upload-section">
                         <h4>📄 ダウンロード資料（PDF）</h4>
-                        <input type="file" class="file-input" accept="application/pdf" onchange="handleFileUpload(event, '${material.id}', 'pdf')">
+                        <input type="file" id="pdfInput-${material.id}" class="file-input" accept="application/pdf" onchange="handleFileSelect(event, '${material.id}', 'pdf')">
+                        <div id="pdfPreview-${material.id}" class="file-preview"></div>
+                        <div class="save-button-container">
+                            <button id="pdfSaveBtn-${material.id}" class="btn btn-primary" onclick="saveFile('${material.id}', 'pdf')" style="display: none;">PDFを保存</button>
+                        </div>
                     </div>
                     
                     ${filesHtml}
@@ -899,8 +903,7 @@
             });
         }
 
-        // ファイルアップロード
-        window.handleFileUpload = async function(event, materialId, fileType) {
+        window.handleFileSelect = function(event, materialId, fileType) {
             const file = event.target.files[0];
             if (!file) return;
 
@@ -925,12 +928,54 @@
                 return;
             }
 
+            // ファイルを一時保存
+            if (!pendingUploads[materialId]) {
+                pendingUploads[materialId] = {};
+            }
+            pendingUploads[materialId][fileType] = file;
+
+            // プレビュー表示
+            const previewId = `${fileType}Preview-${materialId}`;
+            const saveBtnId = `${fileType}SaveBtn-${materialId}`;
+            const preview = document.getElementById(previewId);
+            const saveBtn = document.getElementById(saveBtnId);
+
+            preview.textContent = `選択: ${file.name} (${(file.size / 1024).toFixed(1)} KB)`;
+            preview.classList.add('active');
+            saveBtn.style.display = 'inline-block';
+        };
+
+        window.saveFile = async function(materialId, fileType) {
+            if (!pendingUploads[materialId] || !pendingUploads[materialId][fileType]) {
+                alert('ファイルが選択されていません');
+                return;
+            }
+
+            const file = pendingUploads[materialId][fileType];
+            const saveBtnId = `${fileType}SaveBtn-${materialId}`;
+            const saveBtn = document.getElementById(saveBtnId);
+            
+            saveBtn.disabled = true;
+            saveBtn.textContent = 'アップロード中...';
+
             try {
+                console.log('=== アップロード開始 ===');
+                console.log('ファイル名:', file.name);
+                console.log('ファイルタイプ:', file.type);
+                console.log('ファイルサイズ:', file.size, 'bytes');
+                console.log('カテゴリID:', materialId);
+                console.log('ファイルタイプ指定:', fileType);
+
                 const fileId = `${Date.now()}_${file.name}`;
                 const storageRef = ref(storage, `materials/${materialId}/${fileId}`);
                 
+                console.log('Storage参照:', storageRef.fullPath);
+                
                 await uploadBytes(storageRef, file);
+                console.log('Storageアップロード完了');
+                
                 const downloadURL = await getDownloadURL(storageRef);
+                console.log('ダウンロードURL取得:', downloadURL);
 
                 const fileData = {
                     id: fileId,
@@ -941,19 +986,32 @@
                     uploadDate: new Date().toISOString()
                 };
 
+                console.log('Firestoreに保存するデータ:', fileData);
+                
                 await setDoc(doc(db, `materials/${materialId}/files`, fileId), fileData);
+                console.log('Firestore保存完了');
 
-                alert(`${file.name} をアップロードしました`);
+                alert(`${file.name} を保存しました！`);
+                
+                // クリーンアップ
+                delete pendingUploads[materialId][fileType];
+                document.getElementById(`${fileType}Input-${materialId}`).value = '';
+                document.getElementById(`${fileType}Preview-${materialId}`).classList.remove('active');
+                saveBtn.style.display = 'none';
+                
                 await loadMaterialsForAdmin();
             } catch (error) {
-                console.error('アップロードエラー:', error);
-                alert('ファイルのアップロードに失敗しました');
+                console.error('=== アップロードエラー詳細 ===');
+                console.error('エラーコード:', error.code);
+                console.error('エラーメッセージ:', error.message);
+                console.error('エラー全体:', error);
+                alert('ファイルの保存に失敗しました: ' + error.message);
             } finally {
-                event.target.value = '';
+                saveBtn.disabled = false;
+                saveBtn.textContent = fileType === 'image' ? '画像を保存' : 'PDFを保存';
             }
         };
 
-        // ファイル削除
         window.deleteFile = async function(materialId, fileId, fileName) {
             if (!confirm(`${fileName} を削除しますか?`)) return;
 
@@ -966,11 +1024,11 @@
                 await loadMaterialsForAdmin();
             } catch (error) {
                 console.error('削除エラー:', error);
-                alert('ファイルの削除に失敗しました');
+                alert('ファイルの削除に失敗しました: ' + error.message);
             }
         };
 
-        // 初期化
+        // 初期化（デフォルトでダウンロードページを表示）
         window.addEventListener('DOMContentLoaded', function() {
             const isAdmin = sessionStorage.getItem('adminAuth') === 'true';
             if (isAdmin) {
