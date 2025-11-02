@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ダウンロードサイト</title>
+    <title>Firebase資料ダウンロードサイト</title>
     <style>
         * {
             margin: 0;
@@ -12,576 +12,49 @@
         }
 
         body {
-            font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;
-            background-color: #f8f9fa;
+            font-family: 'Yu Gothic', '游ゴシック', YuGothic, 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Meiryo', sans-serif;
+            background-color: #f9fafb;
             color: #333;
             line-height: 1.6;
         }
 
-        /* 資料管理用ログイン画面のスタイル */
-        .login-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.8);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 9999;
-        }
-
-        .login-form {
-            background: white;
-            padding: 40px;
-            border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-            width: 90%;
-            max-width: 400px;
-        }
-
-        .login-form h2 {
-            text-align: center;
-            color: #2c3e50;
-            margin-bottom: 10px;
-            font-size: 24px;
-        }
-
-        .login-form p {
-            text-align: center;
-            color: #6c757d;
-            margin-bottom: 20px;
-            font-size: 14px;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            color: #495057;
-            font-weight: 500;
-        }
-
-        .form-group input {
-            width: 100%;
-            padding: 12px 15px;
-            border: 2px solid #dee2e6;
-            border-radius: 6px;
-            font-size: 16px;
-            transition: border-color 0.3s ease;
-        }
-
-        .form-group input:focus {
-            outline: none;
-            border-color: #007bff;
-        }
-
-        .login-btn {
-            width: 100%;
-            padding: 12px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            font-size: 16px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-
-        .login-btn:hover {
-            background-color: #0056b3;
-        }
-
-        .login-error {
-            color: #dc3545;
-            text-align: center;
-            margin-top: 15px;
-            display: none;
-        }
-
-        /* ナビゲーションタブのスタイル */
-        .admin-tabs {
-            background: white;
-            border-bottom: 2px solid #e9ecef;
-            padding: 0 20px;
-            display: block;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-
-        .tabs-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .tab-buttons {
-            display: flex;
-        }
-
-        .tab-btn {
-            padding: 15px 25px;
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-size: 16px;
-            color: #6c757d;
-            border-bottom: 3px solid transparent;
-            transition: all 0.3s ease;
-        }
-
-        .tab-btn.active {
-            color: #007bff;
-            border-bottom-color: #007bff;
-            font-weight: 600;
-        }
-
-        .tab-btn:hover {
-            color: #007bff;
-        }
-
-        .admin-controls {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .admin-status {
-            color: #28a745;
-            font-size: 14px;
-            font-weight: 500;
-        }
-
-        .logout-btn {
-            padding: 8px 16px;
-            background-color: #dc3545;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 14px;
-            transition: background-color 0.3s ease;
-        }
-
-        .logout-btn:hover {
-            background-color: #c82333;
-        }
-
-        /* メインコンテナ */
         .container {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 40px 20px;
+            padding: 20px;
+        }
+
+        /* Header */
+        header {
             background: white;
-            min-height: calc(100vh - 80px);
+            border-bottom: 1px solid #e5e7eb;
+            padding: 20px 0;
+            margin-bottom: 30px;
         }
 
-        /* Thank Youページのスタイル */
-        .thank-you-page {
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        .header {
+        h1 {
             text-align: center;
-            margin-bottom: 40px;
-        }
-
-        .header h1 {
             font-size: 28px;
-            color: #2c3e50;
-            margin-bottom: 20px;
+            color: #1f2937;
+            margin-bottom: 10px;
         }
-
-
 
         .description {
             text-align: center;
-            margin-bottom: 40px;
-            color: #6c757d;
+            color: #6b7280;
             font-size: 16px;
         }
 
-        .materials-section {
-            margin-bottom: 40px;
-        }
-
-        .materials-title {
-            font-size: 18px;
-            margin-bottom: 20px;
-            color: #2c3e50;
-            text-align: center;
-        }
-
-        .select-all {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .select-all label {
-            display: inline-flex;
-            align-items: center;
-            cursor: pointer;
-            font-weight: 500;
-            color: #495057;
-        }
-
-        .select-all input[type="checkbox"] {
-            margin-right: 8px;
-            transform: scale(1.2);
-        }
-
-        .materials-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
+        /* Navigation */
+        .nav-buttons {
+            display: flex;
+            justify-content: center;
             gap: 15px;
             margin-bottom: 30px;
-        }
-
-        .material-item {
-            text-align: center;
-            transition: transform 0.2s ease;
-        }
-
-        .material-item:hover {
-            transform: translateY(-2px);
-        }
-
-        .material-checkbox {
-            margin-bottom: 10px;
-        }
-
-        .material-checkbox input[type="checkbox"] {
-            margin-right: 8px;
-            transform: scale(1.1);
-        }
-
-        .material-checkbox label {
-            cursor: pointer;
-            font-weight: 500;
-            color: #495057;
-        }
-
-        .material-preview {
-            width: 100%;
-            height: 120px;
-            background-color: #dee2e6;
-            margin: 0 auto;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #6c757d;
-            font-size: 12px;
-            border: 2px solid transparent;
-            transition: border-color 0.2s ease;
-            cursor: pointer;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .material-preview.selected {
-            border-color: #28a745;
-            box-shadow: 0 0 0 2px rgba(40, 167, 69, 0.3);
-            transform: scale(1.05);
-        }
-
-        .material-preview img {
-            max-width: 100%;
-            max-height: 100%;
-            border-radius: 6px;
-            object-fit: contain;
-        }
-
-        .download-section {
-            text-align: center;
-        }
-
-        .download-btn {
-            background-color: #28a745;
-            color: white;
-            border: none;
-            padding: 15px 40px;
-            font-size: 16px;
-            border-radius: 25px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 10px rgba(40, 167, 69, 0.3);
-        }
-
-        .download-btn:hover {
-            background-color: #218838;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.4);
-        }
-
-        .download-btn:disabled {
-            background-color: #6c757d;
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
-        }
-
-        .loading {
-            display: none;
-            margin-top: 20px;
-            color: #6c757d;
-        }
-
-        .message {
-            margin-top: 20px;
-            padding: 15px;
-            border-radius: 8px;
-            display: none;
-        }
-
-        .message.success {
-            background-color: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-
-        .message.error {
-            background-color: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
-
-        .message.info {
-            background-color: #d1ecf1;
-            color: #0c5460;
-            border: 1px solid #bee5eb;
-        }
-
-        /* 管理画面のスタイル */
-        .admin-page {
-            display: none;
-        }
-
-        .admin-materials-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-
-        .material-card {
-            background: white;
-            border-radius: 12px;
-            padding: 20px;
-            box-shadow: 0 2px 15px rgba(0,0,0,0.1);
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-
-        .material-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-        }
-
-        .material-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid #e9ecef;
-        }
-
-        .material-title {
-            font-size: 18px;
-            font-weight: 600;
-            color: #2c3e50;
-        }
-
-        .material-status {
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 500;
-        }
-
-        .status-uploaded {
-            background-color: #d4edda;
-            color: #155724;
-        }
-
-        .status-empty {
-            background-color: #f8d7da;
-            color: #721c24;
-        }
-
-        .preview-section {
-            margin-bottom: 20px;
-        }
-
-        .preview-label {
-            font-size: 14px;
-            color: #495057;
-            margin-bottom: 10px;
-            font-weight: 500;
-        }
-
-        .admin-preview-area {
-            width: 100%;
-            height: 200px;
-            border: 2px dashed #dee2e6;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background-color: #f8f9fa;
-            transition: all 0.3s ease;
-            cursor: pointer;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .admin-preview-area:hover {
-            border-color: #007bff;
-            background-color: #e3f2fd;
-        }
-
-        .admin-preview-area.dragover {
-            border-color: #28a745;
-            background-color: #d4edda;
-        }
-
-        .preview-placeholder {
-            text-align: center;
-            color: #6c757d;
-            font-size: 14px;
-        }
-
-        .preview-image {
-            max-width: 100%;
-            max-height: 100%;
-            object-fit: contain;
-            border-radius: 6px;
-        }
-
-        .file-input-section {
-            margin-bottom: 15px;
-        }
-
-        .file-input-wrapper {
-            position: relative;
-            display: inline-block;
-            width: 100%;
-        }
-
-        .file-input {
-            display: none;
-        }
-
-        .file-input-button {
-            display: inline-block;
-            width: 100%;
-            padding: 12px 20px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 14px;
-            text-align: center;
-            transition: background-color 0.3s ease;
-        }
-
-        .file-input-button:hover {
-            background-color: #0056b3;
-        }
-
-        .file-input-button.success {
-            background-color: #28a745;
-        }
-
-        .file-input-button.success:hover {
-            background-color: #1e7e34;
-        }
-
-        .material-info {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-
-        .file-name {
-            font-size: 12px;
-            color: #6c757d;
-            max-width: 60%;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .file-size {
-            font-size: 12px;
-            color: #28a745;
-            font-weight: 500;
-        }
-
-        .action-buttons {
-            display: flex;
-            gap: 10px;
         }
 
         .btn {
-            padding: 8px 16px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 12px;
-            font-weight: 500;
-            transition: all 0.3s ease;
-        }
-
-        .btn-danger {
-            background-color: #dc3545;
-            color: white;
-        }
-
-        .btn-danger:hover {
-            background-color: #c82333;
-        }
-
-        .btn-info {
-            background-color: #17a2b8;
-            color: white;
-        }
-
-        .btn-info:hover {
-            background-color: #138496;
-        }
-
-        .global-actions {
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            margin-bottom: 20px;
-        }
-
-        .global-actions h3 {
-            color: #2c3e50;
-            margin-bottom: 15px;
-        }
-
-        .global-buttons {
-            display: flex;
-            gap: 15px;
-            flex-wrap: wrap;
-        }
-
-        .btn-global {
-            padding: 12px 24px;
+            padding: 10px 20px;
             border: none;
             border-radius: 6px;
             cursor: pointer;
@@ -591,1160 +64,921 @@
         }
 
         .btn-primary {
-            background-color: #007bff;
+            background-color: #3b82f6;
             color: white;
         }
 
         .btn-primary:hover {
-            background-color: #0056b3;
+            background-color: #2563eb;
+        }
+
+        .btn-secondary {
+            background-color: #6b7280;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background-color: #4b5563;
+        }
+
+        .btn-danger {
+            background-color: #ef4444;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background-color: #dc2626;
         }
 
         .btn-success {
-            background-color: #28a745;
+            background-color: #10b981;
             color: white;
+            padding: 12px 30px;
+            font-size: 14px;
         }
 
         .btn-success:hover {
-            background-color: #1e7e34;
+            background-color: #059669;
         }
 
-        .btn-warning {
-            background-color: #ffc107;
-            color: #212529;
+        .btn:disabled {
+            background-color: #9ca3af;
+            cursor: not-allowed;
         }
 
-        .btn-warning:hover {
-            background-color: #e0a800;
-        }
-
-        .statistics {
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 15px;
-        }
-
-        .stat-item {
-            text-align: center;
-            padding: 15px;
-            background-color: #f8f9fa;
-            border-radius: 8px;
-        }
-
-        .stat-number {
-            font-size: 24px;
-            font-weight: 600;
-            color: #007bff;
-            margin-bottom: 5px;
-        }
-
-        .stat-label {
+        .btn-small {
+            padding: 6px 12px;
             font-size: 12px;
-            color: #6c757d;
         }
 
-        .admin-access-link {
+        /* Login Modal */
+        .modal {
+            display: none;
             position: fixed;
-            bottom: 20px;
-            right: 20px;
-            padding: 10px 15px;
-            background-color: rgba(0, 123, 255, 0.9);
-            color: white;
-            text-decoration: none;
-            border-radius: 25px;
-            font-size: 13px;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            width: 90%;
+            max-width: 400px;
+        }
+
+        .modal-content h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #1f2937;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #374151;
+            font-weight: 500;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 16px;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #3b82f6;
+        }
+
+        .error-message {
+            color: #ef4444;
+            text-align: center;
+            margin-top: 10px;
+            display: none;
+        }
+
+        /* Pages */
+        .page {
+            display: none;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        /* Download Page */
+        .select-all {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .select-all label {
+            display: inline-flex;
+            align-items: center;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .select-all input[type="checkbox"] {
+            margin-right: 8px;
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .materials-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .material-card {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s ease;
+        }
+
+        .material-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .material-checkbox {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .material-checkbox input[type="checkbox"] {
+            margin-right: 8px;
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .material-checkbox label {
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .material-preview {
+            width: 100%;
+            height: 150px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: 0 2px 10px rgba(0, 123, 255, 0.3);
+            overflow: hidden;
+            margin-bottom: 15px;
         }
 
-        .admin-access-link:hover {
-            background-color: rgba(0, 123, 255, 1);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(0, 123, 255, 0.4);
+        .material-preview.selected {
+            border-color: #10b981;
+            box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.3);
+        }
+
+        .material-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .material-preview .placeholder {
+            text-align: center;
+            color: #9ca3af;
+        }
+
+        .download-section {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .individual-download {
+            text-align: center;
+        }
+
+        .loading {
+            text-align: center;
+            margin: 40px 0;
+        }
+
+        .spinner {
+            border: 4px solid #f3f4f6;
+            border-top: 4px solid #3b82f6;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Admin Page */
+        .admin-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .admin-card {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .admin-card h3 {
+            margin-bottom: 15px;
+            color: #1f2937;
+        }
+
+        .upload-section {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f9fafb;
+            border-radius: 6px;
+        }
+
+        .upload-section h4 {
+            font-size: 14px;
+            color: #6b7280;
+            margin-bottom: 10px;
+        }
+
+        .file-input {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #d1d5db;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .file-list {
+            margin-top: 15px;
+        }
+
+        .file-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            background: #f9fafb;
+            border-radius: 6px;
+            margin-bottom: 10px;
+        }
+
+        .file-item-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .file-item-name {
+            font-weight: 500;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .file-item-size {
+            font-size: 12px;
+            color: #6b7280;
+        }
+
+        .file-type-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-left: 8px;
+        }
+
+        .badge-image {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .badge-pdf {
+            background: #fee2e2;
+            color: #991b1b;
         }
 
         @media (max-width: 768px) {
             .materials-grid {
                 grid-template-columns: repeat(2, 1fr);
-                gap: 10px;
             }
-            
-            .material-preview {
-                height: 100px;
-            }
-        }
-        
-        @media (max-width: 480px) {
-            .materials-grid {
+
+            .admin-grid {
                 grid-template-columns: 1fr;
-            }
-            
-            .material-preview {
-                height: 140px;
-            }
-        }
-
-            .admin-materials-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .global-buttons {
-                flex-direction: column;
-            }
-            
-            .btn-global {
-                width: 100%;
-            }
-
-            .tabs-container {
-                flex-direction: column;
-                gap: 10px;
-            }
-
-            .admin-controls {
-                margin-top: 10px;
             }
         }
     </style>
 </head>
 <body>
-    <!-- 資料管理用ログイン画面 -->
-    <div class="login-overlay" id="adminLoginOverlay" style="display: none;">
-        <div class="login-form">
+    <!-- Login Modal -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
             <h2>資料管理 - 認証</h2>
-            <p>資料管理にアクセスするにはパスワードが必要です</p>
-            <form id="adminLoginForm">
+            <p style="text-align: center; color: #6b7280; margin-bottom: 20px;">
+                資料管理にアクセスするにはパスワードが必要です
+            </p>
+            <form id="loginForm">
                 <div class="form-group">
-                    <label for="adminPassword">パスワード</label>
-                    <input type="password" id="adminPassword" placeholder="パスワードを入力してください" required>
+                    <label for="password">パスワード</label>
+                    <input type="password" id="password" placeholder="パスワードを入力してください" required>
                 </div>
                 <div style="display: flex; gap: 10px;">
-                    <button type="button" class="login-btn" style="background-color: #6c757d; flex: 1;" onclick="cancelAdminLogin()">キャンセル</button>
-                    <button type="submit" class="login-btn" style="flex: 1;">ログイン</button>
+                    <button type="button" class="btn btn-secondary" style="flex: 1;" onclick="cancelLogin()">キャンセル</button>
+                    <button type="submit" class="btn btn-primary" style="flex: 1;">ログイン</button>
                 </div>
-                <div class="login-error" id="adminLoginError">
-                    パスワードが間違っています
-                </div>
+                <div id="loginError" class="error-message">パスワードが間違っています</div>
             </form>
         </div>
     </div>
 
-    <!-- ナビゲーションタブ -->
-    <div class="admin-tabs" id="adminTabs">
-        <div class="tabs-container">
-            <div class="tab-buttons">
-                <button class="tab-btn active" data-tab="thank-you">ダウンロードサイト</button>
-                <button class="tab-btn" data-tab="admin">資料管理</button>
+    <!-- Download Page -->
+    <div id="downloadPage" class="page active">
+        <header>
+            <div class="container">
+                <h1>Firebase資料ダウンロードサイト</h1>
+                <p class="description">
+                    詳細なPDF資料をダウンロードしてご確認いただけます。<br>
+                    <small style="color: #9ca3af;">＊PDF資料のみがダウンロードされます。画像はプレビュー用です。</small>
+                </p>
             </div>
-            <div class="admin-controls" id="adminControls" style="display: none;">
-                <span class="admin-status">管理者モード</span>
-                <button class="logout-btn" onclick="logout()">一般モード</button>
-            </div>
-        </div>
-    </div>
+        </header>
 
-    <div class="container">
-        <!-- Thank Youページ -->
-        <div id="thankYouPage" class="thank-you-page">
-            <div class="header">
-                <h1>ダウンロードサイト</h1>
+        <div class="container">
+            <div class="nav-buttons">
+                <button class="btn btn-secondary" onclick="showAdminLogin()">資料管理</button>
             </div>
 
-
-
-            <div class="description">
-
-                詳細なPDF資料をダウンロードしてご確認いただけます。<br>
-                <small style="color: #999; font-size: 14px;">＊PDF資料のみがダウンロードされます。アイキャッチ画像はプレビュー用です。</small>
+            <div id="downloadLoading" class="loading">
+                <div class="spinner"></div>
+                <p style="margin-top: 10px; color: #6b7280;">資料を読み込んでいます...</p>
             </div>
 
-            <div class="materials-section">
-                <div class="materials-title">すべての資料一括ダウンロードする</div>
+            <div id="downloadContent" style="display: none;">
+                <h2 style="text-align: center; margin-bottom: 20px;">資料をダウンロードする</h2>
                 
                 <div class="select-all">
                     <label>
-                        <input type="checkbox" id="selectAll">
+                        <input type="checkbox" id="selectAll" onchange="toggleSelectAll()">
                         全て選択
                     </label>
                 </div>
 
-                <div class="materials-grid">
-                    <div class="material-item">
-                        <div class="material-checkbox">
-                            <label>
-                                <input type="checkbox" class="material-check" data-material="1">
-                                新入社員研修
-                            </label>
-                        </div>
-                        <div class="material-preview" data-material="1">
-                            <span>新入社員研修<br>プレビュー</span>
-                        </div>
-                    </div>
+                <div id="materialsGrid" class="materials-grid"></div>
 
-                    <div class="material-item">
-                        <div class="material-checkbox">
-                            <label>
-                                <input type="checkbox" class="material-check" data-material="2">
-                                基本
-                            </label>
-                        </div>
-                        <div class="material-preview" data-material="2">
-                            <span>基本<br>プレビュー</span>
-                        </div>
-                    </div>
-
-                    <div class="material-item">
-                        <div class="material-checkbox">
-                            <label>
-                                <input type="checkbox" class="material-check" data-material="3">
-                                中級
-                            </label>
-                        </div>
-                        <div class="material-preview" data-material="3">
-                            <span>中級<br>プレビュー</span>
-                        </div>
-                    </div>
-
-                    <div class="material-item">
-                        <div class="material-checkbox">
-                            <label>
-                                <input type="checkbox" class="material-check" data-material="4">
-                                応用
-                            </label>
-                        </div>
-                        <div class="material-preview" data-material="4">
-                            <span>応用<br>プレビュー</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="download-section">
-                <button class="download-btn" id="downloadBtn" disabled>
-                    資料をダウンロードする
-                </button>
-                <div class="loading" id="loading">
-                    ダウンロード準備中...
-                </div>
-                <div class="message" id="message"></div>
-            </div>
-        </div>
-
-        <!-- 管理画面 -->
-        <div id="adminPage" class="admin-page">
-            <div class="global-actions">
-                <h3>一括操作</h3>
-                <div class="global-buttons">
-                    <button class="btn-global btn-success" onclick="saveAllChanges()">
-                        全ての変更を保存
-                    </button>
-                    <button class="btn-global btn-warning" onclick="resetAllMaterials()">
-                        全てリセット
+                <div class="download-section">
+                    <button id="downloadBtn" class="btn btn-success" onclick="downloadSelected()" disabled>
+                        選択した資料を一括ダウンロード
                     </button>
                 </div>
             </div>
-
-            <div class="admin-materials-grid" id="adminMaterialsGrid">
-                <!-- 動的に生成される資料カード -->
-            </div>
-
-            <div class="statistics">
-                <h3>統計情報</h3>
-                <div class="stats-grid">
-                    <div class="stat-item">
-                        <div class="stat-number" id="uploadedCount">0</div>
-                        <div class="stat-label">アップロード済み</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-number" id="emptyCount">4</div>
-                        <div class="stat-label">未設定</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-number" id="totalSize">0</div>
-                        <div class="stat-label">合計サイズ (KB)</div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="message" id="adminMessage"></div>
         </div>
     </div>
 
-    <!-- メインページ復帰リンク（一般モード時の復帰用） -->
-    <div class="admin-access-link" id="adminAccessLink" onclick="returnToMainMode()">
-        📄 メインページ
+    <!-- Admin Page -->
+    <div id="adminPage" class="page">
+        <header>
+            <div class="container">
+                <h1>資料管理</h1>
+                <div class="nav-buttons">
+                    <span style="color: #10b981; font-weight: 500;">管理者モード</span>
+                    <button class="btn btn-secondary" onclick="showDownloadPage()">ダウンロードページ</button>
+                    <button class="btn btn-danger" onclick="logout()">ログアウト</button>
+                </div>
+            </div>
+        </header>
+
+        <div class="container">
+            <div id="adminLoading" class="loading">
+                <div class="spinner"></div>
+                <p style="margin-top: 10px; color: #6b7280;">資料を読み込んでいます...</p>
+            </div>
+
+            <div id="adminContent" style="display: none;">
+                <div id="adminGrid" class="admin-grid"></div>
+            </div>
+        </div>
     </div>
 
-    <script>
-        // システム設定
-        const ADMIN_PASSWORD = 'yukarin102@gmail.com';
-        const SESSION_KEY = 'adminSession';
-        const MATERIALS_KEY = 'materialsData';
+    <!-- Firebase SDK -->
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js';
+        import { getFirestore, collection, doc, setDoc, getDocs, deleteDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
-        // 資料データの初期設定（複数ファイル対応）
-        let materialsData = {
-            1: { name: '新入社員研修', files: [] }, // files: [{image, pdfData, fileName, fileSize, fileType, id}]
-            2: { name: '基本', files: [] },
-            3: { name: '中級', files: [] },
-            4: { name: '応用', files: [] }
+        // Firebase設定
+        const firebaseConfig = {
+            apiKey: "AIzaSyAQPFQXjxXc_KG0GQh_5DvuRtT2Dm-_kow",
+            authDomain: "excelfile1.firebaseapp.com",
+            projectId: "excelfile1",
+            storageBucket: "excelfile1.firebasestorage.app",
+            messagingSenderId: "145186267787",
+            appId: "1:145186267787:web:74aba94ec9026cd4132a8e"
         };
 
-        // ファイルIDのカウンター
-        let fileIdCounter = 1;
+        const app = initializeApp(firebaseConfig);
+        const storage = getStorage(app);
+        const db = getFirestore(app);
 
-        // 認証状態の管理
-        let isAdminAuthenticated = false;
-        let currentTab = 'thank-you';
+        // グローバル変数
+        const ADMIN_PASSWORD = 'admin123';
+        const MATERIAL_CATEGORIES = [
+            { id: '1', name: '新入社員研修' },
+            { id: '2', name: '基本' },
+            { id: '3', name: '中級' },
+            { id: '4', name: '応用' }
+        ];
 
-        // ページ読み込み時の初期化
-        document.addEventListener('DOMContentLoaded', function() {
-            loadMaterialsData();
-            // 初回はThank Youページを表示
-            showMainMode();
-            initializeThankYouPage();
-            
-            // 初期表示時にアイキャッチ画像を同期
-            setTimeout(() => {
-                updateMaterialPreviews();
-                console.log('Initial eyecatch images synchronized on page load');
-            }, 200);
-            
-            // 資料管理ログインフォームの処理
-            document.getElementById('adminLoginForm').addEventListener('submit', function(e) {
-                e.preventDefault();
-                handleAdminLogin();
-            });
+        let materials = [];
+        let selectedFiles = new Set();
 
-            // タブ切り替えの処理
-            document.querySelectorAll('.tab-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    requestTabSwitch(this.dataset.tab);
-                });
-            });
-        });
+        // ページ切り替え
+        window.showDownloadPage = function() {
+            document.getElementById('downloadPage').classList.add('active');
+            document.getElementById('adminPage').classList.remove('active');
+            loadMaterialsForDownload();
+        };
 
-        // ローカルストレージからデータを読み込み
-        function loadMaterialsData() {
-            const savedData = localStorage.getItem(MATERIALS_KEY);
-            if (savedData) {
-                materialsData = JSON.parse(savedData);
-            }
-        }
+        window.showAdminLogin = function() {
+            document.getElementById('loginModal').classList.add('active');
+        };
 
-        // データをローカルストレージに保存
-        function saveMaterialsData() {
-            localStorage.setItem(MATERIALS_KEY, JSON.stringify(materialsData));
-        }
+        window.cancelLogin = function() {
+            document.getElementById('loginModal').classList.remove('active');
+            document.getElementById('password').value = '';
+            document.getElementById('loginError').style.display = 'none';
+        };
 
-        // 管理者セッションの確認
-        function checkAdminSession() {
-            const session = localStorage.getItem(SESSION_KEY);
-            if (session) {
-                const sessionData = JSON.parse(session);
-                const now = new Date().getTime();
-                
-                // 24時間でセッション期限切れ
-                if (now - sessionData.timestamp < 24 * 60 * 60 * 1000) {
-                    isAdminAuthenticated = true;
-                    return true;
-                } else {
-                    localStorage.removeItem(SESSION_KEY);
-                }
-            }
-            return false;
-        }
+        window.logout = function() {
+            sessionStorage.removeItem('adminAuth');
+            showDownloadPage();
+        };
 
-        // タブ切り替えリクエスト処理
-        function requestTabSwitch(tabName) {
-            if (tabName === 'admin') {
-                // 資料管理タブの場合は認証チェック
-                if (!isAdminAuthenticated && !checkAdminSession()) {
-                    showAdminLogin();
-                    return;
-                }
-            }
-            switchTab(tabName);
-        }
-
-        // 資料管理ログイン画面表示
-        function showAdminLogin() {
-            document.getElementById('adminLoginOverlay').style.display = 'flex';
-            document.getElementById('adminPassword').focus();
-        }
-
-        // 資料管理ログイン処理
-        function handleAdminLogin() {
-            const password = document.getElementById('adminPassword').value;
-            const errorElement = document.getElementById('adminLoginError');
+        // ログイン処理
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const password = document.getElementById('password').value;
             
             if (password === ADMIN_PASSWORD) {
-                // ログイン成功
-                isAdminAuthenticated = true;
-                const sessionData = {
-                    timestamp: new Date().getTime()
-                };
-                localStorage.setItem(SESSION_KEY, JSON.stringify(sessionData));
-                
-                document.getElementById('adminLoginOverlay').style.display = 'none';
-                document.getElementById('adminPassword').value = '';
-                errorElement.style.display = 'none';
-                
-                switchTab('admin');
+                sessionStorage.setItem('adminAuth', 'true');
+                document.getElementById('loginModal').classList.remove('active');
+                document.getElementById('password').value = '';
+                document.getElementById('loginError').style.display = 'none';
+                showAdminPage();
             } else {
-                // ログイン失敗
-                errorElement.style.display = 'block';
-                document.getElementById('adminPassword').focus();
-                document.getElementById('adminPassword').select();
+                document.getElementById('loginError').style.display = 'block';
+            }
+        });
+
+        function showAdminPage() {
+            document.getElementById('downloadPage').classList.remove('active');
+            document.getElementById('adminPage').classList.add('active');
+            loadMaterialsForAdmin();
+        }
+
+        // 資料読み込み（ダウンロードページ用）
+        async function loadMaterialsForDownload() {
+            document.getElementById('downloadLoading').style.display = 'block';
+            document.getElementById('downloadContent').style.display = 'none';
+
+            try {
+                materials = [];
+                for (const category of MATERIAL_CATEGORIES) {
+                    const filesSnapshot = await getDocs(collection(db, `materials/${category.id}/files`));
+                    const files = filesSnapshot.docs.map(doc => ({
+                        id: doc.id,
+                        ...doc.data()
+                    }));
+                    
+                    materials.push({
+                        id: category.id,
+                        name: category.name,
+                        files
+                    });
+                }
+
+                renderMaterialsGrid();
+                document.getElementById('downloadLoading').style.display = 'none';
+                document.getElementById('downloadContent').style.display = 'block';
+            } catch (error) {
+                console.error('資料の読み込みエラー:', error);
+                alert('資料の読み込みに失敗しました');
+                document.getElementById('downloadLoading').style.display = 'none';
             }
         }
 
-        // 資料管理ログインキャンセル
-        function cancelAdminLogin() {
-            document.getElementById('adminLoginOverlay').style.display = 'none';
-            document.getElementById('adminPassword').value = '';
-            document.getElementById('adminLoginError').style.display = 'none';
-            
-            // Thank Youタブに戻る
-            switchTab('thank-you');
-        }
+        // 資料グリッド表示
+        function renderMaterialsGrid() {
+            const grid = document.getElementById('materialsGrid');
+            grid.innerHTML = '';
 
-        // ログアウト
-        function logout() {
-            if (confirm('一般ユーザーモードに切り替えますか？')) {
-                isAdminAuthenticated = false;
-                localStorage.removeItem(SESSION_KEY);
-                showPublicMode();
-            }
-        }
+            materials.forEach(material => {
+                const pdfFiles = material.files.filter(f => f.fileType === 'pdf');
+                const imageFile = material.files.find(f => f.fileType === 'image');
+                const hasPDF = pdfFiles.length > 0;
 
-        // 公開モード表示
-        function showPublicMode() {
-            document.getElementById('adminTabs').style.display = 'none';
-            document.getElementById('adminAccessLink').style.display = 'block';
-            document.getElementById('thankYouPage').style.display = 'block';
-            document.getElementById('adminPage').style.display = 'none';
-            document.getElementById('adminControls').style.display = 'none';
-        }
-
-        // メインモード表示（タブ付き）
-        function showMainMode() {
-            document.getElementById('adminTabs').style.display = 'block';
-            document.getElementById('adminAccessLink').style.display = 'none';
-            initializeAdminPage();
-            switchTab('thank-you'); // デフォルトでThank Youページを表示
-        }
-
-        // メインモードに復帰
-        function returnToMainMode() {
-            showMainMode();
-        }
-
-        // タブ切り替え
-        function switchTab(tabName) {
-            currentTab = tabName;
-            
-            // タブボタンの状態更新
-            document.querySelectorAll('.tab-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
-
-            // ページの表示切り替え
-            if (tabName === 'thank-you') {
-                document.getElementById('thankYouPage').style.display = 'block';
-                document.getElementById('adminPage').style.display = 'none';
-                document.getElementById('adminControls').style.display = 'none';
+                const card = document.createElement('div');
+                card.className = 'material-card';
                 
-                // Thank Youページ表示時にアイキャッチ画像を同期
-                setTimeout(() => {
-                    updateMaterialPreviews();
-                    console.log('Thank You page eyecatch images synchronized on tab switch');
-                }, 100);
-            } else if (tabName === 'admin') {
-                document.getElementById('thankYouPage').style.display = 'none';
-                document.getElementById('adminPage').style.display = 'block';
-                document.getElementById('adminControls').style.display = 'flex';
-                updateAdminUI();
-            }
+                let checkboxHtml = '';
+                if (hasPDF) {
+                    const fileId = pdfFiles[0].id;
+                    checkboxHtml = `
+                        <div class="material-checkbox">
+                            <input type="checkbox" id="file-${fileId}" onchange="toggleFileSelection('${fileId}')">
+                            <label for="file-${fileId}">${material.name}</label>
+                        </div>
+                    `;
+                } else {
+                    checkboxHtml = `<div class="material-checkbox"><span>${material.name}</span></div>`;
+                }
+
+                let previewHtml = '';
+                if (imageFile) {
+                    previewHtml = `<img src="${imageFile.downloadUrl}" alt="${material.name}">`;
+                } else if (hasPDF) {
+                    previewHtml = `<div class="placeholder">📄<br>${material.name}</div>`;
+                } else {
+                    previewHtml = `<div class="placeholder">プレビュー</div>`;
+                }
+
+                let downloadButtonHtml = '';
+                if (hasPDF) {
+                    downloadButtonHtml = `
+                        <button class="btn btn-success btn-small" style="width: 100%;" onclick="downloadIndividual('${material.id}')">
+                            個別ダウンロード
+                        </button>
+                    `;
+                }
+
+                card.innerHTML = `
+                    ${checkboxHtml}
+                    <div class="material-preview" id="preview-${pdfFiles[0]?.id}" onclick="${hasPDF ? `toggleFileSelection('${pdfFiles[0].id}')` : ''}">
+                        ${previewHtml}
+                    </div>
+                    ${downloadButtonHtml}
+                `;
+
+                grid.appendChild(card);
+            });
         }
 
-        // Thank Youページの初期化
-        function initializeThankYouPage() {
-            const selectAllCheckbox = document.getElementById('selectAll');
-            const materialCheckboxes = document.querySelectorAll('.material-check');
-            const materialPreviews = document.querySelectorAll('.material-preview');
-            const downloadBtn = document.getElementById('downloadBtn');
-
-            // アイキャッチ画像の初期表示
-            console.log('Initializing Thank You page with eyecatch images...');
-            updateMaterialPreviews();
-
-            // 全選択チェックボックスの処理
-            selectAllCheckbox.addEventListener('change', function() {
-                materialCheckboxes.forEach(checkbox => {
-                    checkbox.checked = this.checked;
-                    updatePreviewSelection(checkbox);
-                });
-                updateDownloadButton();
-            });
-
-            // 個別チェックボックスの処理
-            materialCheckboxes.forEach(checkbox => {
-                checkbox.addEventListener('change', function() {
-                    updatePreviewSelection(this);
-                    updateSelectAllCheckbox();
-                    updateDownloadButton();
-                });
-            });
-
-            // プレビュー画像のクリック処理
-            materialPreviews.forEach(preview => {
-                preview.addEventListener('click', function() {
-                    const materialId = this.dataset.material;
-                    const checkbox = document.querySelector(`input[data-material="${materialId}"]`);
-                    checkbox.checked = !checkbox.checked;
-                    updatePreviewSelection(checkbox);
-                    updateSelectAllCheckbox();
-                    updateDownloadButton();
-                });
-            });
-
-            // ダウンロードボタンの処理
-            downloadBtn.addEventListener('click', handleDownload);
+        // ファイル選択
+        window.toggleFileSelection = function(fileId) {
+            const checkbox = document.getElementById(`file-${fileId}`);
+            const preview = document.getElementById(`preview-${fileId}`);
+            
+            if (selectedFiles.has(fileId)) {
+                selectedFiles.delete(fileId);
+                checkbox.checked = false;
+                preview.classList.remove('selected');
+            } else {
+                selectedFiles.add(fileId);
+                checkbox.checked = true;
+                preview.classList.add('selected');
+            }
 
             updateDownloadButton();
-        }
+        };
 
-        // PDFアイコンSVGの生成
-        function createPDFIcon() {
-            return `<svg width="60" height="60" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M7 2V13H20V4C20 2.9 19.1 2 18 2H7Z" fill="#FF6B6B"/>
-                <path d="M4 7V20C4 21.1 4.9 22 6 22H18C19.1 22 20 21.1 20 20V13H7C5.34 13 4 11.66 4 10V7Z" fill="#E53E3E"/>
-                <text x="12" y="18" font-family="Arial, sans-serif" font-size="6" fill="white" text-anchor="middle">PDF</text>
-            </svg>`;
-        }
-
-        // 資料プレビューの更新（Thank Youページのアイキャッチ画像を更新）
-        function updateMaterialPreviews() {
-            console.log('Updating material previews...', materialsData);
-            Object.keys(materialsData).forEach(id => {
-                // Thank Youページの資料プレビュー要素を取得
-                const preview = document.querySelector(`.material-preview[data-material="${id}"]`);
-                const material = materialsData[id];
-                
-                if (preview) {
-                    if (material.files && material.files.length > 0) {
-                        const firstFile = material.files[0]; // 最初のファイルをアイキャッチとして使用
-                        const fileCount = material.files.length;
-                        
-                        if (firstFile.image) {
-                            // アップロードされた画像をアイキャッチとして表示
-                            preview.innerHTML = `
-                                <div style="position: relative; width: 100%; height: 100%;">
-                                    <img src="${firstFile.image}" alt="${material.name}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 6px;">
-                                    ${fileCount > 1 ? `<div style="position: absolute; top: 5px; right: 5px; background: rgba(0,0,0,0.7); color: white; padding: 2px 6px; border-radius: 10px; font-size: 10px; font-weight: 600;">+${fileCount - 1}</div>` : ''}
-                                </div>`;
-                            preview.style.backgroundColor = '#ffffff';
-                            console.log(`Updated Thank You page preview for ${material.name} with ${fileCount} files`);
-                        } else if (firstFile.pdfData && firstFile.fileType === 'pdf') {
-                            // PDFファイルの場合はPDFアイコンを表示
-                            preview.innerHTML = `
-                                <div style="position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 6px; color: white;">
-                                    ${createPDFIcon()}
-                                    <div style="margin-top: 5px; font-size: 11px; font-weight: 600; text-align: center;">${material.name}</div>
-                                    <div style="font-size: 9px; opacity: 0.8;">${(firstFile.fileSize / 1024 / 1024).toFixed(1)}MB</div>
-                                    ${fileCount > 1 ? `<div style="position: absolute; top: 5px; right: 5px; background: rgba(255,255,255,0.3); color: white; padding: 2px 6px; border-radius: 10px; font-size: 10px; font-weight: 600;">+${fileCount - 1}</div>` : ''}
-                                </div>`;
-                            preview.style.backgroundColor = '#ffffff';
-                            console.log(`Updated Thank You page preview for ${material.name} with ${fileCount} PDF files`);
+        // 全選択
+        window.toggleSelectAll = function() {
+            const selectAll = document.getElementById('selectAll');
+            
+            if (selectAll.checked) {
+                materials.forEach(material => {
+                    material.files.forEach(file => {
+                        if (file.fileType === 'pdf') {
+                            selectedFiles.add(file.id);
+                            const checkbox = document.getElementById(`file-${file.id}`);
+                            const preview = document.getElementById(`preview-${file.id}`);
+                            if (checkbox) checkbox.checked = true;
+                            if (preview) preview.classList.add('selected');
                         }
-                    } else {
-                        // ファイルがない場合はデフォルト表示
-                        preview.innerHTML = `<span>${material.name}<br>プレビュー</span>`;
-                        preview.style.backgroundColor = '#dee2e6';
-                        console.log(`Updated Thank You page preview for ${material.name} without files`);
-                    }
-                } else {
-                    console.warn(`Thank You page preview element not found for material ${id}`);
-                }
-            });
-            
-            // 選択状態も再適用
-            const materialCheckboxes = document.querySelectorAll('.material-check');
-            materialCheckboxes.forEach(checkbox => {
-                if (checkbox.checked) {
-                    updatePreviewSelection(checkbox);
-                }
-            });
-        }
-
-        // プレビューの選択状態を更新（アイキャッチ画像の選択状態）
-        function updatePreviewSelection(checkbox) {
-            const materialId = checkbox.dataset.material;
-            const preview = document.querySelector(`.material-preview[data-material="${materialId}"]`);
-            
-            if (preview) {
-                if (checkbox.checked) {
-                    preview.classList.add('selected');
-                    console.log(`Selected eyecatch for ${materialsData[materialId].name}`);
-                } else {
-                    preview.classList.remove('selected');
-                    console.log(`Deselected eyecatch for ${materialsData[materialId].name}`);
-                }
-            }
-        }
-
-        // 全選択チェックボックスの状態を更新
-        function updateSelectAllCheckbox() {
-            const materialCheckboxes = document.querySelectorAll('.material-check');
-            const selectAllCheckbox = document.getElementById('selectAll');
-            const checkedCount = document.querySelectorAll('.material-check:checked').length;
-            const totalCount = materialCheckboxes.length;
-            
-            if (checkedCount === 0) {
-                selectAllCheckbox.indeterminate = false;
-                selectAllCheckbox.checked = false;
-            } else if (checkedCount === totalCount) {
-                selectAllCheckbox.indeterminate = false;
-                selectAllCheckbox.checked = true;
+                    });
+                });
             } else {
-                selectAllCheckbox.indeterminate = true;
+                selectedFiles.clear();
+                document.querySelectorAll('.material-checkbox input[type="checkbox"]').forEach(cb => cb.checked = false);
+                document.querySelectorAll('.material-preview').forEach(p => p.classList.remove('selected'));
             }
-        }
 
-        // ダウンロードボタンの状態を更新
+            updateDownloadButton();
+        };
+
         function updateDownloadButton() {
-            const checkedCount = document.querySelectorAll('.material-check:checked').length;
-            document.getElementById('downloadBtn').disabled = checkedCount === 0;
+            const btn = document.getElementById('downloadBtn');
+            btn.disabled = selectedFiles.size === 0;
         }
 
-        // ダウンロード処理
-        function handleDownload() {
-            const selectedMaterials = [];
-            const materialCheckboxes = document.querySelectorAll('.material-check');
-            
-            materialCheckboxes.forEach(checkbox => {
-                if (checkbox.checked) {
-                    const materialId = checkbox.dataset.material;
-                    selectedMaterials.push(materialsData[materialId]);
-                }
-            });
+        // 個別ダウンロード
+        window.downloadIndividual = async function(materialId) {
+            const material = materials.find(m => m.id === materialId);
+            if (!material) return;
 
-            if (selectedMaterials.length === 0) {
-                showMessage('ダウンロードする資料を選択してください。', 'error');
+            const pdfFiles = material.files.filter(f => f.fileType === 'pdf');
+            if (pdfFiles.length === 0) {
+                alert('PDFファイルがありません');
                 return;
             }
 
-            // ダウンロード処理のシミュレーション
-            const downloadBtn = document.getElementById('downloadBtn');
-            const loading = document.getElementById('loading');
-            
-            downloadBtn.disabled = true;
-            loading.style.display = 'block';
-            document.getElementById('message').style.display = 'none';
+            try {
+                if (pdfFiles.length === 1) {
+                    // 単一ファイルの場合は直接ダウンロード
+                    const link = document.createElement('a');
+                    link.href = pdfFiles[0].downloadUrl;
+                    link.download = pdfFiles[0].fileName;
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                } else {
+                    // 複数ファイルの場合はZIPでダウンロード
+                    const JSZip = (await import('https://cdn.jsdelivr.net/npm/jszip@3.10.1/+esm')).default;
+                    const zip = new JSZip();
 
-            setTimeout(() => {
-                downloadFiles(selectedMaterials);
-                
-                loading.style.display = 'none';
-                downloadBtn.disabled = false;
-                showMessage(`${selectedMaterials.length}件の資料をダウンロードしました。`, 'success');
-            
-            // ダウンロード後もアイキャッチ画像の状態を維持
-            setTimeout(() => {
-                updateMaterialPreviews();
-            }, 100);
-            }, 2000);
-        }
+                    for (const file of pdfFiles) {
+                        const response = await fetch(file.downloadUrl);
+                        const blob = await response.blob();
+                        zip.file(file.fileName, blob);
+                    }
 
-        // ファイルダウンロード処理
-        function downloadFiles(selectedMaterials) {
-            selectedMaterials.forEach(material => {
-                if (material.files && material.files.length > 0) {
-                    material.files.forEach((file, index) => {
-                        // PDFファイルのみを処理
-                        if (file.pdfData && file.fileType === 'pdf') {
-                            const fileName = material.files.length > 1 ? 
-                                `${material.name}_${index + 1}_${file.fileName}` : 
-                                file.fileName || `${material.name}.pdf`;
-                            
-                            // PDFファイルのダウンロード
-                            setTimeout(() => downloadPDFFile(file.pdfData, fileName), index * 500);
+                    const content = await zip.generateAsync({ type: 'blob' });
+                    const url = window.URL.createObjectURL(content);
+                    const link = document.createElement('a');
+                    link.href = url;
+                    link.download = `${material.name}.zip`;
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    window.URL.revokeObjectURL(url);
+                }
+            } catch (error) {
+                console.error('ダウンロードエラー:', error);
+                alert('ダウンロードに失敗しました');
+            }
+        };
+
+        // 一括ダウンロード
+        window.downloadSelected = async function() {
+            if (selectedFiles.size === 0) {
+                alert('ダウンロードするファイルを選択してください');
+                return;
+            }
+
+            const btn = document.getElementById('downloadBtn');
+            btn.disabled = true;
+            btn.textContent = 'ダウンロード準備中...';
+
+            try {
+                const JSZip = (await import('https://cdn.jsdelivr.net/npm/jszip@3.10.1/+esm')).default;
+                const zip = new JSZip();
+
+                const selectedFilesList = [];
+                materials.forEach(material => {
+                    material.files.forEach(file => {
+                        if (selectedFiles.has(file.id) && file.fileType === 'pdf') {
+                            selectedFilesList.push(file);
                         }
                     });
+                });
+
+                for (const file of selectedFilesList) {
+                    try {
+                        const response = await fetch(file.downloadUrl);
+                        const blob = await response.blob();
+                        zip.file(file.fileName, blob);
+                    } catch (error) {
+                        console.error(`${file.fileName}のダウンロードエラー:`, error);
+                    }
                 }
-            });
-        }
 
-        // PDFファイルのダウンロード
-        function downloadPDFFile(pdfData, fileName) {
-            const link = document.createElement('a');
-            link.href = pdfData;
-            link.download = fileName;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        }
+                const content = await zip.generateAsync({ type: 'blob' });
+                const url = window.URL.createObjectURL(content);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = `資料_${new Date().toISOString().split('T')[0]}.zip`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                window.URL.revokeObjectURL(url);
 
-        // 単一ファイルのダウンロード（レガシー）
-        function downloadFile(filename, displayName) {
-            const link = document.createElement('a');
-            link.href = `./files/${filename}`;
-            link.download = displayName;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        }
+                alert('ダウンロードを開始しました');
+            } catch (error) {
+                console.error('ダウンロードエラー:', error);
+                alert('ダウンロードに失敗しました');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = '選択した資料を一括ダウンロード';
+            }
+        };
 
-        // ZIP形式でのダウンロード
-        function downloadAsZip(selectedMaterials) {
-            console.log('ZIP download:', selectedMaterials);
-            // 実際の実装では、サーバーサイドでZIPファイルを生成
-        }
+        // 資料読み込み（管理画面用）
+        async function loadMaterialsForAdmin() {
+            document.getElementById('adminLoading').style.display = 'block';
+            document.getElementById('adminContent').style.display = 'none';
 
-        // メッセージ表示
-        function showMessage(text, type, targetId = 'message') {
-            const message = document.getElementById(targetId);
-            message.textContent = text;
-            message.className = `message ${type}`;
-            message.style.display = 'block';
-            
-            setTimeout(() => {
-                message.style.display = 'none';
-            }, 5000);
-        }
-
-        // === 管理画面の機能 ===
-
-        // 管理画面の初期化
-        function initializeAdminPage() {
-            updateAdminUI();
-        }
-
-        // 管理画面UIの更新
-        function updateAdminUI() {
-            const grid = document.getElementById('adminMaterialsGrid');
-            grid.innerHTML = '';
-            
-            Object.keys(materialsData).forEach(id => {
-                const cardHTML = createMaterialCard(id, materialsData[id]);
-                grid.innerHTML += cardHTML;
-            });
-            
-            updateStatistics();
-        }
-
-        // 資料カードを生成
-        function createMaterialCard(id, material) {
-            const hasFiles = material.files && material.files.length > 0;
-            const fileCount = hasFiles ? material.files.length : 0;
-            const statusClass = hasFiles ? 'status-uploaded' : 'status-empty';
-            const statusText = hasFiles ? `アップロード済み (${fileCount}件)` : '未設定';
-            const buttonClass = hasFiles ? 'success' : '';
-            const buttonText = 'ファイルを追加';
-
-            return `
-                <div class="material-card">
-                    <div class="material-header">
-                        <div class="material-title">${material.name}</div>
-                        <div class="material-status ${statusClass}">${statusText}</div>
-                    </div>
+            try {
+                materials = [];
+                for (const category of MATERIAL_CATEGORIES) {
+                    const filesSnapshot = await getDocs(collection(db, `materials/${category.id}/files`));
+                    const files = filesSnapshot.docs.map(doc => ({
+                        id: doc.id,
+                        ...doc.data()
+                    }));
                     
-                    <div class="preview-section">
-                        <div class="preview-label">プレビュー</div>
-                        <div class="admin-preview-area" onclick="triggerFileInput(${id})" 
-                             ondrop="handleDrop(event, ${id})" 
-                             ondragover="handleDragOver(event)"
-                             ondragenter="handleDragEnter(event)"
-                             ondragleave="handleDragLeave(event)">
-                            ${hasFiles ? 
-                                generateFileListPreview(material.files) :
-                                '<div class="preview-placeholder">クリックまたはドラッグ&ドロップで<br>画像またはPDFをアップロード</div>'
-                            }
-                        </div>
-                    </div>
+                    materials.push({
+                        id: category.id,
+                        name: category.name,
+                        files
+                    });
+                }
 
-                    <div class="file-input-section">
-                        <div class="file-input-wrapper">
-                            <input type="file" class="file-input" id="fileInput${id}" 
-                                   accept="image/*,application/pdf,.pdf" onchange="handleFileSelect(event, ${id})">
-                            <label for="fileInput${id}" class="file-input-button ${buttonClass}">
-                                ${buttonText}
-                            </label>
-                        </div>
-                    </div>
+                renderAdminGrid();
+                document.getElementById('adminLoading').style.display = 'none';
+                document.getElementById('adminContent').style.display = 'block';
+            } catch (error) {
+                console.error('資料の読み込みエラー:', error);
+                alert('資料の読み込みに失敗しました');
+                document.getElementById('adminLoading').style.display = 'none';
+            }
+        }
 
-                    ${hasFiles ? `
-                        <div class="files-list" style="max-height: 120px; overflow-y: auto; margin-bottom: 15px;">
-                            ${material.files.map((file, index) => `
-                                <div class="file-item" style="display: flex; justify-content: space-between; align-items: center; padding: 5px; border: 1px solid #e9ecef; border-radius: 4px; margin-bottom: 5px; background: #f8f9fa;">
-                                    <div style="flex: 1; min-width: 0;">
-                                        <div class="file-name" style="font-size: 12px; font-weight: 500; color: #495057; overflow: hidden; text-overflow: ellipsis;" title="${file.fileName}">${index + 1}. ${file.fileName}</div>
-                                        <div class="file-size" style="font-size: 10px; color: #6c757d;">${file.fileType === 'pdf' ? (file.fileSize / 1024 / 1024).toFixed(1) + ' MB' : (file.fileSize / 1024).toFixed(1) + ' KB'}</div>
+        // 管理画面グリッド表示
+        function renderAdminGrid() {
+            const grid = document.getElementById('adminGrid');
+            grid.innerHTML = '';
+
+            materials.forEach(material => {
+                const card = document.createElement('div');
+                card.className = 'admin-card';
+                
+                const imageFiles = material.files.filter(f => f.fileType === 'image');
+                const pdfFiles = material.files.filter(f => f.fileType === 'pdf');
+                const totalFiles = imageFiles.length + pdfFiles.length;
+                
+                const status = totalFiles > 0 ? `登録済み (${totalFiles}件)` : '未登録';
+                const statusClass = totalFiles > 0 ? 'background: #d1fae5; color: #065f46;' : 'background: #fee2e2; color: #991b1b;';
+
+                let filesHtml = '';
+                if (totalFiles > 0) {
+                    const allFiles = [...imageFiles, ...pdfFiles];
+                    filesHtml = `
+                        <div class="file-list">
+                            <p style="font-weight: 500; margin-bottom: 10px;">登録済みファイル</p>
+                            ${allFiles.map(file => `
+                                <div class="file-item">
+                                    <div class="file-item-info">
+                                        <div class="file-item-name">
+                                            ${file.fileType === 'image' ? '🖼️' : '📄'} ${file.fileName}
+                                            <span class="file-type-badge ${file.fileType === 'image' ? 'badge-image' : 'badge-pdf'}">
+                                                ${file.fileType === 'image' ? 'プレビュー用' : 'ダウンロード用'}
+                                            </span>
+                                        </div>
+                                        <div class="file-item-size">${(file.fileSize / 1024).toFixed(1)} KB</div>
                                     </div>
-                                    <div style="display: flex; gap: 5px;">
-                                        <button class="btn" style="padding: 2px 6px; font-size: 10px; background-color: #17a2b8; color: white;" onclick="previewFile(${id}, ${file.id})">⦿</button>
-                                        <button class="btn" style="padding: 2px 6px; font-size: 10px; background-color: #dc3545; color: white;" onclick="removeFile(${id}, ${file.id})">×</button>
-                                    </div>
+                                    <button class="btn btn-danger btn-small" onclick="deleteFile('${material.id}', '${file.id}', '${file.fileName}')">削除</button>
                                 </div>
                             `).join('')}
                         </div>
-                    ` : ''}
+                    `;
+                }
 
-                    <div class="action-buttons">
-                        ${hasFiles ? '<button class="btn btn-danger" onclick="removeAllFiles(' + id + ')">全て削除</button>' : ''}
-                        <button class="btn btn-info" onclick="previewMaterial(${id})">プレビュー</button>
+                card.innerHTML = `
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                        <h3>${material.name}</h3>
+                        <span style="padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: 500; ${statusClass}">${status}</span>
                     </div>
-                </div>
-            `;
-        }
+                    
+                    <div class="upload-section">
+                        <h4>🖼️ プレビュー画像（PNG/JPG）</h4>
+                        <input type="file" class="file-input" accept="image/*" onchange="handleFileUpload(event, '${material.id}', 'image')">
+                    </div>
+                    
+                    <div class="upload-section">
+                        <h4>📄 ダウンロード資料（PDF）</h4>
+                        <input type="file" class="file-input" accept="application/pdf" onchange="handleFileUpload(event, '${material.id}', 'pdf')">
+                    </div>
+                    
+                    ${filesHtml}
+                `;
 
-        // ファイルリストプレビューを生成
-        function generateFileListPreview(files) {
-            if (!files || files.length === 0) return '';
-            
-            const firstFile = files[0];
-            if (firstFile.image) {
-                return `<img src="${firstFile.image}" alt="Preview" class="preview-image">`;
-            } else if (firstFile.pdfData && firstFile.fileType === 'pdf') {
-                return `<div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 6px; color: white;">
-                    ${createPDFIcon()}
-                    <div style="margin-top: 8px; font-size: 12px; font-weight: 600;">${firstFile.fileName}</div>
-                    <div style="font-size: 10px; opacity: 0.8;">${files.length}件のファイル</div>
-                </div>`;
-            }
-            return '';
-        }
-
-        // 統計情報を更新
-        function updateStatistics() {
-            let uploadedCount = 0;
-            let totalFiles = 0;
-            let totalSize = 0;
-            
-            Object.values(materialsData).forEach(material => {
-                if (material.files && material.files.length > 0) {
-                    uploadedCount++;
-                    totalFiles += material.files.length;
-                    material.files.forEach(file => {
-                        totalSize += file.fileSize;
-                    });
-                }
+                grid.appendChild(card);
             });
-            
-            document.getElementById('uploadedCount').textContent = `${uploadedCount}資料 (${totalFiles}ファイル)`;
-            document.getElementById('emptyCount').textContent = 4 - uploadedCount;
-            document.getElementById('totalSize').textContent = (totalSize / 1024 / 1024).toFixed(1);
         }
 
-        // ファイル入力をトリガー
-        function triggerFileInput(id) {
-            document.getElementById(`fileInput${id}`).click();
-        }
-
-        // ファイル選択処理
-        function handleFileSelect(event, id) {
+        // ファイルアップロード
+        window.handleFileUpload = async function(event, materialId, fileType) {
             const file = event.target.files[0];
-            if (file) {
-                if (file.type.startsWith('image/')) {
-                    processImageFile(file, id);
-                } else if (file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf')) {
-                    processPDFFile(file, id);
-                } else {
-                    showMessage('画像ファイル（JPG, PNG等）またはPDFファイルを選択してください。', 'error', 'adminMessage');
-                }
-            }
-        }
+            if (!file) return;
 
-        // ドラッグ&ドロップ処理
-        function handleDragOver(event) {
-            event.preventDefault();
-        }
+            const isImage = file.type.startsWith('image/');
+            const isPDF = file.type === 'application/pdf';
 
-        function handleDragEnter(event) {
-            event.preventDefault();
-            event.target.closest('.admin-preview-area').classList.add('dragover');
-        }
-
-        function handleDragLeave(event) {
-            event.preventDefault();
-            if (!event.target.closest('.admin-preview-area').contains(event.relatedTarget)) {
-                event.target.closest('.admin-preview-area').classList.remove('dragover');
-            }
-        }
-
-        function handleDrop(event, id) {
-            event.preventDefault();
-            event.target.closest('.admin-preview-area').classList.remove('dragover');
-            
-            const files = event.dataTransfer.files;
-            if (files.length > 0) {
-                const file = files[0];
-                if (file.type.startsWith('image/')) {
-                    processImageFile(file, id);
-                } else if (file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf')) {
-                    processPDFFile(file, id);
-                } else {
-                    showMessage('画像ファイル（JPG, PNG等）またはPDFファイルをドロップしてください。', 'error', 'adminMessage');
-                }
-            }
-        }
-
-        // 画像ファイルを処理
-        function processImageFile(file, materialId) {
-            if (file.size > 5 * 1024 * 1024) {
-                showMessage('ファイルサイズは5MB以下にしてください。', 'error', 'adminMessage');
+            if (fileType === 'image' && !isImage) {
+                alert('画像ファイルを選択してください');
+                event.target.value = '';
                 return;
             }
 
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                // A4横サイズ（16:9比率）にリサイズ
-                resizeImageToA4Landscape(e.target.result, function(resizedImage) {
-                    const fileData = {
-                        id: fileIdCounter++,
-                        image: resizedImage,
-                        pdfData: null,
-                        fileName: file.name,
-                        fileSize: file.size,
-                        fileType: 'image',
-                        uploadDate: new Date().toISOString()
-                    };
-                    
-                    materialsData[materialId].files.push(fileData);
-                    
-                    console.log(`Processed image for material ${materialId}:`, {
-                        fileCount: materialsData[materialId].files.length,
-                        fileName: file.name,
-                        materialName: materialsData[materialId].name
-                    });
-                    
-                    saveMaterialsData();
-                    updateAdminUI();
-                    
-                    // Thank Youページのアイキャッチ画像を即座に更新
-                    setTimeout(() => {
-                        updateMaterialPreviews();
-                        console.log(`Thank You page eyecatch updated for ${materialsData[materialId].name}`);
-                    }, 100);
-                    
-                    const fileCount = materialsData[materialId].files.length;
-                    showMessage(`${materialsData[materialId].name}に画像が追加されました。（総計${fileCount}件）Thank Youページにも反映されました。`, 'success', 'adminMessage');
-                });
-            };
-            reader.readAsDataURL(file);
-        }
-
-        // PDFファイルを処理
-        function processPDFFile(file, materialId) {
-            if (file.size > 10 * 1024 * 1024) { // PDFは10MB制限
-                showMessage('PDFファイルサイズは10MB以下にしてください。', 'error', 'adminMessage');
+            if (fileType === 'pdf' && !isPDF) {
+                alert('PDFファイルを選択してください');
+                event.target.value = '';
                 return;
             }
 
-            const reader = new FileReader();
-            reader.onload = function(e) {
+            if (file.size > 10 * 1024 * 1024) {
+                alert('ファイルサイズは10MB以下にしてください');
+                event.target.value = '';
+                return;
+            }
+
+            try {
+                const fileId = `${Date.now()}_${file.name}`;
+                const storageRef = ref(storage, `materials/${materialId}/${fileId}`);
+                
+                await uploadBytes(storageRef, file);
+                const downloadURL = await getDownloadURL(storageRef);
+
                 const fileData = {
-                    id: fileIdCounter++,
-                    image: null,
-                    pdfData: e.target.result,
+                    id: fileId,
                     fileName: file.name,
+                    fileType: fileType,
                     fileSize: file.size,
-                    fileType: 'pdf',
+                    downloadUrl: downloadURL,
                     uploadDate: new Date().toISOString()
                 };
-                
-                materialsData[materialId].files.push(fileData);
-                
-                console.log(`Processed PDF for material ${materialId}:`, {
-                    fileCount: materialsData[materialId].files.length,
-                    fileName: file.name,
-                    materialName: materialsData[materialId].name
-                });
-                
-                saveMaterialsData();
-                updateAdminUI();
-                
-                // Thank YouページのアイキャッチにPDFアイコンを表示
-                setTimeout(() => {
-                    updateMaterialPreviews();
-                    console.log(`Thank You page eyecatch updated for ${materialsData[materialId].name} with PDF`);
-                }, 100);
-                
-                const fileCount = materialsData[materialId].files.length;
-                showMessage(`${materialsData[materialId].name}にPDFが追加されました。（総計${fileCount}件）Thank Youページにも反映されました。`, 'success', 'adminMessage');
-            };
-            reader.readAsDataURL(file);
-        }
 
-        // 画像をA4横サイズ（16:9比率）にリサイズ
-        function resizeImageToA4Landscape(imageSrc, callback) {
-            const img = new Image();
-            img.onload = function() {
-                const canvas = document.createElement('canvas');
-                const ctx = canvas.getContext('2d');
-                
-                // A4横の比率 (16:9に近似)
-                const targetWidth = 800;
-                const targetHeight = 450;
-                
-                canvas.width = targetWidth;
-                canvas.height = targetHeight;
-                
-                // 画像のアスペクト比を保持しながらリサイズ
-                const sourceRatio = img.width / img.height;
-                const targetRatio = targetWidth / targetHeight;
-                
-                let drawWidth, drawHeight, drawX, drawY;
-                
-                if (sourceRatio > targetRatio) {
-                    // 横長の画像：横幅に合わせる
-                    drawWidth = targetWidth;
-                    drawHeight = targetWidth / sourceRatio;
-                    drawX = 0;
-                    drawY = (targetHeight - drawHeight) / 2;
-                } else {
-                    // 縦長の画像：縦幅に合わせる
-                    drawHeight = targetHeight;
-                    drawWidth = targetHeight * sourceRatio;
-                    drawX = (targetWidth - drawWidth) / 2;
-                    drawY = 0;
-                }
-                
-                // 背景を白で塗りつぶし
-                ctx.fillStyle = '#ffffff';
-                ctx.fillRect(0, 0, targetWidth, targetHeight);
-                
-                // 画像を描画
-                ctx.drawImage(img, drawX, drawY, drawWidth, drawHeight);
-                
-                // リサイズされた画像をBase64で返す
-                callback(canvas.toDataURL('image/jpeg', 0.9));
-            };
-            img.src = imageSrc;
-        }
+                await setDoc(doc(db, `materials/${materialId}/files`, fileId), fileData);
 
-        // 特定のファイルを削除
-        function removeFile(materialId, fileId) {
-            const material = materialsData[materialId];
-            const fileIndex = material.files.findIndex(file => file.id === fileId);
-            
-            if (fileIndex !== -1) {
-                const fileName = material.files[fileIndex].fileName;
-                if (confirm(`"${fileName}"を削除しますか？`)) {
-                    material.files.splice(fileIndex, 1);
-                    
-                    saveMaterialsData();
-                    updateAdminUI();
-                    
-                    setTimeout(() => {
-                        updateMaterialPreviews();
-                        console.log(`File removed from ${material.name}`);
-                    }, 100);
-                    
-                    const remainingCount = material.files.length;
-                    showMessage(`ファイルが削除されました。${material.name}には${remainingCount}件のファイルが残っています。`, 'success', 'adminMessage');
-                }
+                alert(`${file.name} をアップロードしました`);
+                await loadMaterialsForAdmin();
+            } catch (error) {
+                console.error('アップロードエラー:', error);
+                alert('ファイルのアップロードに失敗しました');
+            } finally {
+                event.target.value = '';
             }
-        }
+        };
 
-        // 資料の全ファイルを削除
-        function removeAllFiles(materialId) {
-            const material = materialsData[materialId];
-            const fileCount = material.files.length;
-            
-            if (confirm(`${material.name}の全てのファイル（${fileCount}件）を削除しますか？`)) {
-                material.files = [];
-                
-                saveMaterialsData();
-                updateAdminUI();
-                
-                saveMaterialsData();
-                updateAdminUI();
-                
-                // Thank Youページのアイキャッチ画像を削除
-                setTimeout(() => {
-                    updateMaterialPreviews();
-                    console.log(`All files removed from ${material.name}`);
-                }, 100);
-                
-                showMessage(`${material.name}の全てのファイルが削除されました。Thank Youページからも削除されました。`, 'success', 'adminMessage');
-            }
-        }
+        // ファイル削除
+        window.deleteFile = async function(materialId, fileId, fileName) {
+            if (!confirm(`${fileName} を削除しますか?`)) return;
 
-        // 特定のファイルをプレビュー
-        function previewFile(materialId, fileId) {
-            const material = materialsData[materialId];
-            const file = material.files.find(f => f.id === fileId);
-            
-            if (!file) {
-                showMessage('ファイルが見つかりません。', 'error', 'adminMessage');
-                return;
-            }
-            
-            if (file.image) {
-                // 画像の場合
-                const newWindow = window.open('', '_blank');
-                newWindow.document.write(`
-                    <html>
-                        <head><title>${file.fileName} - プレビュー</title></head>
-                        <body style="margin:0; display:flex; justify-content:center; align-items:center; min-height:100vh; background:#f0f0f0;">
-                            <img src="${file.image}" style="max-width:100%; max-height:100%; object-fit:contain;">
-                        </body>
-                    </html>
-                `);
-            } else if (file.pdfData && file.fileType === 'pdf') {
-                // PDFの場合
-                const newWindow = window.open('', '_blank');
-                newWindow.location.href = file.pdfData;
-            }
-        }
+            try {
+                const storageRef = ref(storage, `materials/${materialId}/${fileId}`);
+                await deleteObject(storageRef);
+                await deleteDoc(doc(db, `materials/${materialId}/files`, fileId));
 
-        // 資料の最初のファイルをプレビュー（既存の関数との互換性のため）
-        function previewMaterial(materialId) {
-            const material = materialsData[materialId];
-            if (material.files && material.files.length > 0) {
-                previewFile(materialId, material.files[0].id);
+                alert('ファイルを削除しました');
+                await loadMaterialsForAdmin();
+            } catch (error) {
+                console.error('削除エラー:', error);
+                alert('ファイルの削除に失敗しました');
+            }
+        };
+
+        // 初期化
+        window.addEventListener('DOMContentLoaded', function() {
+            const isAdmin = sessionStorage.getItem('adminAuth') === 'true';
+            if (isAdmin) {
+                showAdminPage();
             } else {
-                showMessage(`${material.name}のファイルが設定されていません。`, 'error', 'adminMessage');
+                loadMaterialsForDownload();
             }
-        }
-
-        // 全ての変更を保存
-        function saveAllChanges() {
-            saveMaterialsData();
-            // Thank Youページのアイキャッチも同期
-            setTimeout(() => {
-                updateMaterialPreviews();
-                console.log('All changes saved and Thank You page eyecatch synchronized');
-            }, 100);
-            showMessage('全ての変更が保存されました。Thank Youページのアイキャッチも更新されました。', 'success', 'adminMessage');
-        }
-
-        // 全てリセット
-        function resetAllMaterials() {
-            const totalFiles = Object.values(materialsData).reduce((sum, material) => sum + (material.files ? material.files.length : 0), 0);
-            
-            if (confirm(`全ての資料ファイル（総計${totalFiles}件）をリセットしますか？この操作は取り消せません。`)) {
-                Object.keys(materialsData).forEach(id => {
-                    materialsData[id].files = [];
-                });
-                
-                saveMaterialsData();
-                updateAdminUI();
-                
-                // Thank Youページの全アイキャッチ画像をリセット
-                setTimeout(() => {
-                    updateMaterialPreviews();
-                    console.log('All Thank You page eyecatch images reset');
-                }, 100);
-                
-                showMessage('全ての資料ファイルがリセットされました。Thank Youページからも削除されました。', 'info', 'adminMessage');
-            }
+        });
+    </script>
+</body>
+</html>
