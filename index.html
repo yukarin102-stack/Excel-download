@@ -744,6 +744,11 @@
                     document.body.removeChild(link);
                     window.URL.revokeObjectURL(url);
                 }
+                
+                // ダウンロード完了後、ダウンロードページに遷移
+                setTimeout(() => {
+                    showDownloadPage();
+                }, 500);
             } catch (error) {
                 console.error('ダウンロードエラー:', error);
                 alert('ダウンロードに失敗しました: ' + error.message);
@@ -794,6 +799,11 @@
                 window.URL.revokeObjectURL(url);
 
                 alert('ダウンロードを開始しました');
+                
+                // ダウンロード完了後、ダウンロードページに遷移
+                setTimeout(() => {
+                    showDownloadPage();
+                }, 500);
             } catch (error) {
                 console.error('ダウンロードエラー:', error);
                 alert('ダウンロードに失敗しました: ' + error.message);
